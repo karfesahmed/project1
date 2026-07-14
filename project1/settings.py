@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'orders.apps.OrdersConfig',
-    'Locations.apps.LocationsConfig',
+    'locations.apps.LocationsConfig',
     'dashboard.apps.DashboardConfig',
     'notifications.apps.NotificationsConfig',
     'store.apps.StoreConfig'
@@ -131,10 +131,12 @@ STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = os.path.join(BASE_DIR,'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
 STORAGES = {
     "staticfiles" : {
         "BACKEND" : "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+MEDIA_URL = os.path.join(BASE_DIR,'media/')
