@@ -13,8 +13,6 @@ class CommuneListSerializer(serializers.ListSerializer):
     
     def create(self,validated_data):
         print(validated_data)
-        # communes = [Commune(wilaya = Wilaya.objects.get(code = commune["wilaya"]).id,name=commune["name"],ar_name=commune["ar_name"]) for commune in validated_data]
-        # communes = [Commune(wilaya = commune["wilaya_id"],name=commune["name"],ar_name=commune["ar_name"]) for commune in validated_data]
         communes = [Commune(**commune) for commune in validated_data]
         Commune.objects.all().delete()
         return Commune.objects.bulk_create(communes)
