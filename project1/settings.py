@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_filters',
     # apps
     'core.apps.CoreConfig',
     'accounts.apps.AccountsConfig',
@@ -50,6 +51,12 @@ INSTALLED_APPS = [
     'notifications.apps.NotificationsConfig',
     'store.apps.StoreConfig'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

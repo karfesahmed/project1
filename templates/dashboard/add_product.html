@@ -1,0 +1,725 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<style>
+/* ==========================================================================
+   ADD PRODUCT PAGE — inherits root tokens already defined in base.html
+   (--primary, --secondary, --accent, --background, --card, --primary-text,
+    --secondry-text, --border, --outline, --succes, --error, --warning,
+    --navy, --radius, --transition). Scoped additions only below.
+   ========================================================================== */
+.ap-page{
+    max-width:900px;
+    margin:0 auto;
+    padding:26px 28px 60px;
+}
+
+/* ---------- header ---------- */
+.ap-back{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;
+    color:var(--secondry-text);
+    padding:8px 4px;
+    margin-bottom:18px;
+    transition:color var(--transition), transform .15s;
+}
+.ap-back:hover{color:var(--primary-text);transform:translateX(-3px);}
+.ap-back svg{width:16px;height:16px;}
+
+.ap-header{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    flex-wrap:wrap;gap:14px;
+    margin-bottom:22px;
+}
+.ap-header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;}
+.ap-header p{color:var(--secondry-text);font-size:13.5px;margin-top:6px;max-width:480px;}
+
+.ap-step-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 14px;
+    background:var(--card);
+    border:1px solid var(--border-solid, #e5e7eb);
+    border-radius:20px;
+    font-size:12.5px;font-weight:600;
+    color:var(--primary-text);
+    flex-shrink:0;
+    white-space:nowrap;
+}
+.ap-step-badge .dots{display:flex;gap:4px;}
+.ap-step-badge .dots span{width:6px;height:6px;border-radius:50%;background:var(--border-solid,#e5e7eb);}
+.ap-step-badge .dots span:first-child{background:var(--primary);}
+
+.ap-info-card{
+    display:flex;gap:12px;align-items:flex-start;
+    background:linear-gradient(160deg, rgba(37,99,235,.06), rgba(37,99,235,.02));
+    border:1px solid rgba(37,99,235,.18);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:26px;
+}
+.ap-info-card svg{width:19px;height:19px;color:var(--accent);flex-shrink:0;margin-top:1px;}
+.ap-info-card p{font-size:13px;color:var(--primary-text);line-height:1.5;}
+.ap-info-card strong{font-weight:600;}
+
+/* ---------- layout ---------- */
+.ap-grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:20px;
+    align-items:flex-start;
+}
+
+/* ---------- form card ---------- */
+.ap-card{
+    background:var(--card);
+    border:1px solid var(--border-solid, #e5e7eb);
+    border-radius:var(--radius);
+    padding:28px;
+}
+
+.ap-field{
+    position:relative;
+    margin-bottom:26px;
+}
+.ap-field:last-child{margin-bottom:0;}
+
+.ap-field-icon{
+    position:absolute;
+    left:16px;top:18px;
+    width:18px;height:18px;
+    color:var(--secondry-text);
+    transition:color var(--transition);
+    pointer-events:none;
+}
+
+.ap-input,
+.ap-textarea{
+    width:100%;
+    padding:18px 16px 8px 46px;
+    border:1.5px solid var(--border-solid, #e5e7eb);
+    border-radius:14px;
+    background:var(--background);
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--primary-text);
+    transition:border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+.ap-textarea{
+    padding-top:26px;
+    min-height:120px;
+    resize:vertical;
+    line-height:1.55;
+}
+.ap-field.no-icon .ap-input,
+.ap-field.no-icon .ap-textarea{padding-left:16px;}
+
+.ap-input:focus,
+.ap-textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    background:var(--card);
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+}
+.ap-field.focused .ap-field-icon{color:var(--accent);}
+
+.ap-label{
+    position:absolute;
+    left:46px;top:18px;
+    font-size:14.5px;
+    color:var(--secondry-text);
+    pointer-events:none;
+    transform-origin:left top;
+    transition:transform var(--transition), color var(--transition), top var(--transition);
+    background:transparent;
+}
+.ap-field.no-icon .ap-label{left:16px;}
+
+.ap-input:focus + .ap-label,
+.ap-input:not(:placeholder-shown) + .ap-label,
+.ap-textarea:focus + .ap-label,
+.ap-textarea:not(:placeholder-shown) + .ap-label{
+    top:8px;
+    transform:scale(.76);
+    color:var(--accent);
+}
+.ap-field.filled .ap-label{
+    top:8px;
+    transform:scale(.76);
+}
+
+.ap-hint-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:6px;
+    padding:0 4px;
+}
+.ap-hint{font-size:11.5px;color:var(--secondry-text);}
+.ap-counter{font-size:11.5px;color:var(--secondry-text);font-weight:600;}
+.ap-counter.warn{color:var(--warning);}
+.ap-counter.over{color:var(--error);}
+
+.ap-price-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+@media (max-width:560px){
+    .ap-price-row{grid-template-columns:1fr;}
+}
+.ap-currency{
+    position:absolute;left:16px;top:18px;
+    font-size:14.5px;font-weight:600;color:var(--secondry-text);
+    pointer-events:none;
+    transition:color var(--transition);
+}
+.ap-field.currency .ap-input{padding-left:32px;}
+.ap-field.currency .ap-label{left:32px;}
+.ap-field.currency.focused .ap-currency{color:var(--accent);}
+
+.ap-optional-tag{
+    position:absolute;right:14px;top:15px;
+    font-size:10.5px;font-weight:600;
+    color:var(--secondry-text);
+    background:var(--muted);
+    padding:3px 8px;
+    border-radius:20px;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+}
+
+/* ---------- custom select ---------- */
+.ap-select-wrap{position:relative;}
+.ap-select-trigger{
+    width:100%;
+    display:flex;align-items:center;gap:12px;
+    padding:16px 16px 16px 46px;
+    border:1.5px solid var(--border-solid, #e5e7eb);
+    border-radius:14px;
+    background:var(--background);
+    font-size:14.5px;
+    color:var(--secondry-text);
+    text-align:left;
+    transition:all var(--transition);
+}
+.ap-select-trigger.has-value{color:var(--primary-text);}
+.ap-select-trigger:hover{border-color:var(--accent);}
+.ap-select-wrap.open .ap-select-trigger{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+    background:var(--card);
+}
+.ap-select-icon-left{
+    position:absolute;left:16px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;color:var(--secondry-text);
+}
+.ap-select-chevron{
+    margin-left:auto;width:16px;height:16px;color:var(--secondry-text);
+    transition:transform var(--transition);
+    flex-shrink:0;
+}
+.ap-select-wrap.open .ap-select-chevron{transform:rotate(180deg);}
+
+.ap-select-menu{
+    position:absolute;top:calc(100% + 8px);left:0;right:0;
+    background:var(--card);
+    border:1px solid var(--border-solid, #e5e7eb);
+    border-radius:14px;
+    box-shadow:0 20px 40px -12px rgba(17,24,39,.18);
+    padding:6px;
+    z-index:40;
+    opacity:0;visibility:hidden;
+    transform:translateY(-6px) scale(.98);
+    transition:all .18s ease;
+    max-height:260px;
+    overflow-y:auto;
+}
+.ap-select-wrap.open .ap-select-menu{
+    opacity:1;visibility:visible;transform:translateY(0) scale(1);
+}
+.ap-select-option{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:14px;
+    color:var(--primary-text);
+    transition:background var(--transition);
+}
+.ap-select-option:hover{background:var(--background);}
+.ap-select-option.selected{
+    background:linear-gradient(135deg, rgba(220,38,38,.10), rgba(245,158,11,.06));
+    font-weight:600;
+}
+.ap-select-option svg{width:15px;height:15px;color:var(--secondry-text);flex-shrink:0;}
+.ap-select-option .dot{width:8px;height:8px;border-radius:3px;flex-shrink:0;}
+
+/* ---------- actions ---------- */
+.ap-actions{
+    display:flex;align-items:center;justify-content:flex-end;
+    gap:12px;
+    margin-top:30px;
+    padding-top:24px;
+    border-top:1px solid var(--border-solid, #e5e7eb);
+    flex-wrap:wrap;
+}
+.ap-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 22px;
+    border-radius:12px;
+    font-size:13.5px;font-weight:600;
+    transition:transform .15s, box-shadow .2s, background var(--transition), opacity .2s;
+    white-space:nowrap;
+}
+.ap-btn svg{width:15px;height:15px;}
+.ap-btn-ghost{
+    color:var(--secondry-text);
+    background:transparent;
+}
+.ap-btn-ghost:hover{color:var(--primary-text);background:var(--background);}
+.ap-btn-outline{
+    color:var(--primary-text);
+    background:var(--background);
+    border:1.5px solid var(--border-solid, #e5e7eb);
+}
+.ap-btn-outline:hover{transform:translateY(-2px);box-shadow:0 8px 24px -6px rgba(17,24,39,.10);}
+.ap-btn-primary{
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary),#b91c1c);
+    box-shadow:0 4px 14px rgba(220,38,38,.28);
+    position:relative;
+    min-width:168px;
+}
+.ap-btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(220,38,38,.34);}
+.ap-btn-primary:disabled{opacity:.75;cursor:not-allowed;transform:none;}
+.ap-btn-primary .spinner{
+    width:15px;height:15px;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff;
+    border-radius:50%;
+    display:none;
+    animation:ap-spin .7s linear infinite;
+}
+.ap-btn-primary.loading .spinner{display:inline-block;}
+.ap-btn-primary.loading .btn-label{opacity:.85;}
+.ap-btn-primary.success{background:linear-gradient(135deg,var(--succes),#16a34a);box-shadow:0 4px 14px rgba(34,197,94,.3);}
+@keyframes ap-spin{to{transform:rotate(360deg);}}
+
+/* ---------- sticky summary ---------- */
+.ap-summary{
+    background:var(--card);
+    border:1px solid var(--border-solid, #e5e7eb);
+    border-radius:var(--radius);
+    padding:22px;
+    position:sticky;
+    top:calc(var(--topbar-h, 76px) + 20px);
+}
+.ap-summary h3{font-size:14.5px;font-weight:600;margin-bottom:16px;}
+.ap-summary-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--border-solid, #e5e7eb);
+    font-size:12.5px;
+}
+.ap-summary-row:last-of-type{border-bottom:none;}
+.ap-summary-row span:first-child{color:var(--secondry-text);display:flex;align-items:center;gap:7px;}
+.ap-summary-row span:first-child svg{width:14px;height:14px;}
+.ap-status-pill{
+    font-size:11px;font-weight:700;
+    padding:3px 10px;border-radius:20px;
+    background:rgba(245,158,11,.12);color:var(--warning);
+}
+
+.ap-progress-block{margin:16px 0 18px;}
+.ap-progress-block .ap-progress-caption{
+    display:flex;justify-content:space-between;
+    font-size:11.5px;color:var(--secondry-text);margin-bottom:8px;
+}
+.ap-progress-caption strong{color:var(--primary-text);}
+.ap-progress-track{width:100%;height:8px;background:var(--background);border-radius:20px;overflow:hidden;}
+.ap-progress-fill{
+    height:100%;border-radius:20px;
+    background:linear-gradient(90deg,var(--primary),var(--secondary));
+    width:0%;
+    transition:width 1s cubic-bezier(.4,0,.2,1);
+}
+
+.ap-checklist{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.ap-check-item{
+    display:flex;align-items:center;gap:9px;
+    font-size:12.5px;color:var(--secondry-text);
+    transition:color var(--transition);
+}
+.ap-check-item .ck{
+    width:18px;height:18px;border-radius:6px;
+    border:1.5px solid var(--border-solid, #e5e7eb);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:all var(--transition);
+}
+.ap-check-item .ck svg{width:11px;height:11px;color:#fff;opacity:0;transition:opacity var(--transition);}
+.ap-check-item.done{color:var(--primary-text);}
+.ap-check-item.done .ck{background:var(--succes);border-color:var(--succes);}
+.ap-check-item.done .ck svg{opacity:1;}
+
+.ap-next-step{
+    margin-top:18px;
+    padding:14px;
+    border-radius:12px;
+    background:var(--background);
+    display:flex;align-items:center;gap:10px;
+}
+.ap-next-step .icon{
+    width:34px;height:34px;border-radius:10px;flex-shrink:0;
+    background:rgba(37,99,235,.12);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+}
+.ap-next-step .icon svg{width:16px;height:16px;}
+.ap-next-step div strong{display:block;font-size:12.5px;}
+.ap-next-step div span{font-size:11px;color:var(--secondry-text);}
+
+@media (max-width:960px){
+    .ap-grid{grid-template-columns:1fr;}
+    .ap-summary{position:static;}
+}
+@media (max-width:640px){
+    .ap-page{padding:18px 16px 40px;}
+    .ap-card{padding:20px;}
+    .ap-actions{justify-content:stretch;}
+    .ap-actions .ap-btn{flex:1;}
+    .ap-header{flex-direction:column;}
+}
+
+.ap-shake{animation:ap-shake .4s;}
+@keyframes ap-shake{
+    10%,90%{transform:translateX(-1px);}
+    20%,80%{transform:translateX(2px);}
+    30%,50%,70%{transform:translateX(-4px);}
+    40%,60%{transform:translateX(4px);}
+}
+
+.ap-fade-up{animation:ap-fadeUp .5s ease both;}
+@keyframes ap-fadeUp{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+}
+</style>
+
+<div class="ap-page">
+
+    <a href="#" class="ap-back" onclick="return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to Products
+    </a>
+
+    <div class="ap-header ap-fade-up">
+        <div>
+            <h1>Add New Product</h1>
+            <p>Create a new product before adding images, colors and sizes.</p>
+        </div>
+        <div class="ap-step-badge">
+            <span class="dots"><span></span><span></span><span></span></span>
+            Step 1 of 3
+        </div>
+    </div>
+
+    <div class="ap-info-card ap-fade-up">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p><strong>Images, colors and sizes</strong> will be added after creating the product.</p>
+    </div>
+
+    <form class="ap-grid" id="addProductForm" novalidate>
+        <div class="ap-card">
+
+            <div class="ap-field">
+                <svg class="ap-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+                <input type="text" class="ap-input" id="productName" placeholder=" " required autocomplete="off">
+                <label class="ap-label" for="productName">Product Name *</label>
+            </div>
+
+            <div class="ap-field">
+                <svg class="ap-field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="top:20px;"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                <textarea class="ap-textarea" id="productDescription" placeholder=" " maxlength="600" required></textarea>
+                <label class="ap-label" for="productDescription">Description *</label>
+                <div class="ap-hint-row">
+                    <span class="ap-hint">Briefly describe what makes this product worth buying.</span>
+                    <span class="ap-counter" id="descCounter">0 / 600</span>
+                </div>
+            </div>
+
+            <div class="ap-price-row">
+                <div class="ap-field currency">
+                    <span class="ap-currency">$</span>
+                    <input type="text" inputmode="decimal" class="ap-input" id="productPrice" placeholder=" " required autocomplete="off">
+                    <label class="ap-label" for="productPrice">Price *</label>
+                </div>
+                <div class="ap-field currency">
+                    <span class="ap-currency">$</span>
+                    <input type="text" inputmode="decimal" class="ap-input" id="productDiscountPrice" placeholder=" " autocomplete="off">
+                    <label class="ap-label" for="productDiscountPrice">Discount Price</label>
+                    <span class="ap-optional-tag">Optional</span>
+                </div>
+            </div>
+
+            <div class="ap-field no-icon">
+                <label class="ap-label" style="position:static;transform:none;display:block;margin-bottom:8px;color:var(--primary-text);font-weight:500;font-size:13.5px;">Category *</label>
+                <div class="ap-select-wrap" id="categorySelect">
+                    <button type="button" class="ap-select-trigger" id="categoryTrigger">
+                        <svg class="ap-select-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+                        <span id="categoryLabel">Select a category</span>
+                        <svg class="ap-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="ap-select-menu" id="categoryMenu">
+                        <div class="ap-select-option" data-value="Electronics"><span class="dot" style="background:var(--accent);"></span>Electronics</div>
+                        <div class="ap-select-option" data-value="Clothing"><span class="dot" style="background:var(--primary);"></span>Clothing</div>
+                        <div class="ap-select-option" data-value="Shoes"><span class="dot" style="background:var(--secondary);"></span>Shoes</div>
+                        <div class="ap-select-option" data-value="Accessories"><span class="dot" style="background:var(--succes);"></span>Accessories</div>
+                        <div class="ap-select-option" data-value="Home"><span class="dot" style="background:#8b5cf6;"></span>Home</div>
+                        <div class="ap-select-option" data-value="Books"><span class="dot" style="background:#06b6d4;"></span>Books</div>
+                    </div>
+                    <input type="hidden" id="categoryValue" required>
+                </div>
+            </div>
+
+            <div class="ap-actions">
+                
+                
+                <button type="submit" class="ap-btn ap-btn-primary" id="submitBtn">
+                    <span class="spinner"></span>
+                    <svg class="btn-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;display:none;"><path d="M20 6L9 17l-5-5"/></svg>
+                    <span class="btn-label">Create Product</span>
+                </button>
+            </div>
+        </div>
+
+        <aside class="ap-summary ap-fade-up">
+            <h3>Product Summary</h3>
+
+            <div class="ap-summary-row">
+                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/></svg>Status</span>
+                <span class="ap-status-pill">Draft</span>
+            </div>
+
+            <div class="ap-progress-block">
+                <div class="ap-progress-caption"><span>Completion</span><strong id="completionPct">0%</strong></div>
+                <div class="ap-progress-track"><div class="ap-progress-fill" id="completionFill" data-width="0"></div></div>
+            </div>
+
+            <div class="ap-checklist" id="checklist">
+                <div class="ap-check-item" data-field="productName">
+                    <span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                    Product name added
+                </div>
+                <div class="ap-check-item" data-field="productDescription">
+                    <span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                    Description added
+                </div>
+                <div class="ap-check-item" data-field="productPrice">
+                    <span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                    Price set
+                </div>
+                <div class="ap-check-item" data-field="categoryValue">
+                    <span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                    Category selected
+                </div>
+            </div>
+
+            <div class="ap-next-step">
+                <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
+                <div><strong>Next step</strong><span>Upload images</span></div>
+            </div>
+        </aside>
+    </form>
+</div>
+
+<script>
+(function(){
+    'use strict';
+
+    const form = document.getElementById('addProductForm');
+    const nameInput = document.getElementById('productName');
+    const descInput = document.getElementById('productDescription');
+    const priceInput = document.getElementById('productPrice');
+    const discountInput = document.getElementById('productDiscountPrice');
+    const descCounter = document.getElementById('descCounter');
+
+    const categorySelect = document.getElementById('categorySelect');
+    const categoryTrigger = document.getElementById('categoryTrigger');
+    const categoryMenu = document.getElementById('categoryMenu');
+    const categoryLabel = document.getElementById('categoryLabel');
+    const categoryValue = document.getElementById('categoryValue');
+    const categoryOptions = categoryMenu.querySelectorAll('.ap-select-option');
+
+    const completionPct = document.getElementById('completionPct');
+    const completionFill = document.getElementById('completionFill');
+    const checkItems = document.querySelectorAll('.ap-check-item');
+
+    const submitBtn = document.getElementById('submitBtn');
+    const draftBtn = document.getElementById('draftBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    let formTouched = false;
+
+    /* ---------- floating label focus state ---------- */
+    document.querySelectorAll('.ap-input, .ap-textarea').forEach(function(el){
+        const field = el.closest('.ap-field');
+        el.addEventListener('focus', function(){ field.classList.add('focused'); });
+        el.addEventListener('blur', function(){ field.classList.remove('focused'); });
+        el.addEventListener('input', function(){
+            formTouched = true;
+            updateProgress();
+        });
+    });
+
+    /* ---------- description counter ---------- */
+    descInput.addEventListener('input', function(){
+        const len = descInput.value.length;
+        descCounter.textContent = len + ' / 600';
+        descCounter.classList.remove('warn','over');
+        if(len > 480 && len <= 580) descCounter.classList.add('warn');
+        if(len > 580) descCounter.classList.add('over');
+    });
+
+    /* ---------- price formatting helper ---------- */
+    function formatPriceInput(el){
+        el.addEventListener('input', function(){
+            let v = el.value.replace(/[^0-9.]/g, '');
+            const parts = v.split('.');
+            if(parts.length > 2){
+                v = parts[0] + '.' + parts.slice(1).join('');
+            }
+            if(parts[1] && parts[1].length > 2){
+                v = parts[0] + '.' + parts[1].slice(0,2);
+            }
+            el.value = v;
+        });
+        el.addEventListener('blur', function(){
+            if(el.value && !isNaN(parseFloat(el.value))){
+                el.value = parseFloat(el.value).toFixed(2);
+            }
+        });
+    }
+    formatPriceInput(priceInput);
+    formatPriceInput(discountInput);
+
+    /* ---------- custom select ---------- */
+    categoryTrigger.addEventListener('click', function(e){
+        e.stopPropagation();
+        categorySelect.classList.toggle('open');
+    });
+    categoryOptions.forEach(function(opt){
+        opt.addEventListener('click', function(){
+            categoryOptions.forEach(function(o){ o.classList.remove('selected'); });
+            opt.classList.add('selected');
+            categoryLabel.textContent = opt.getAttribute('data-value');
+            categoryLabel.parentElement.classList.add('has-value');
+            categoryValue.value = opt.getAttribute('data-value');
+            categorySelect.classList.remove('open');
+            formTouched = true;
+            updateProgress();
+        });
+    });
+    document.addEventListener('click', function(e){
+        if(!categorySelect.contains(e.target)) categorySelect.classList.remove('open');
+    });
+    document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') categorySelect.classList.remove('open');
+    });
+
+    /* ---------- progress / checklist ---------- */
+    function updateProgress(){
+        let done = 0;
+        const total = checkItems.length;
+        checkItems.forEach(function(item){
+            const fieldId = item.getAttribute('data-field');
+            const el = document.getElementById(fieldId);
+            const filled = el && el.value && el.value.trim().length > 0;
+            item.classList.toggle('done', !!filled);
+            if(filled) done++;
+        });
+        const pct = Math.round((done / total) * 100);
+        completionPct.textContent = pct + '%';
+        completionFill.style.width = pct + '%';
+    }
+
+    /* ---------- submit flow ---------- */
+    function setLoading(isLoading){
+        submitBtn.classList.toggle('loading', isLoading);
+        submitBtn.disabled = isLoading;
+        draftBtn.disabled = isLoading;
+    }
+
+    function validateForm(){
+        let valid = true;
+        [nameInput, descInput, priceInput].forEach(function(el){
+            if(!el.value.trim()){
+                valid = false;
+                const field = el.closest('.ap-field');
+                field.classList.add('ap-shake');
+                el.style.borderColor = 'var(--error)';
+                setTimeout(function(){ field.classList.remove('ap-shake'); }, 400);
+            } else {
+                el.style.borderColor = '';
+            }
+        });
+        if(!categoryValue.value){
+            valid = false;
+            categorySelect.classList.add('ap-shake');
+            categoryTrigger.style.borderColor = 'var(--error)';
+            setTimeout(function(){ categorySelect.classList.remove('ap-shake'); }, 400);
+        } else {
+            categoryTrigger.style.borderColor = '';
+        }
+        return valid;
+    }
+
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if(!validateForm()) return;
+
+        setLoading(true);
+
+        setTimeout(function(){
+            setLoading(false);
+            submitBtn.classList.add('success');
+            submitBtn.querySelector('.btn-label').textContent = 'Product Created';
+            submitBtn.querySelector('.btn-check').style.display = 'inline-block';
+            formTouched = false;
+
+            setTimeout(function(){
+                submitBtn.classList.remove('success');
+                submitBtn.querySelector('.btn-label').textContent = 'Create Product';
+                submitBtn.querySelector('.btn-check').style.display = 'none';
+            }, 2200);
+        }, 1500);
+    });
+
+    draftBtn.addEventListener('click', function(){
+        const original = draftBtn.innerHTML;
+        draftBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Draft Saved';
+        formTouched = false;
+        setTimeout(function(){ draftBtn.innerHTML = original; }, 1800);
+    });
+
+    cancelBtn.addEventListener('click', function(){
+        if(formTouched && !confirm('Discard changes to this product?')) return;
+        form.reset();
+        categoryLabel.textContent = 'Select a category';
+        categoryLabel.parentElement.classList.remove('has-value');
+        categoryValue.value = '';
+        categoryOptions.forEach(function(o){ o.classList.remove('selected'); });
+        descCounter.textContent = '0 / 600';
+        descCounter.classList.remove('warn','over');
+        formTouched = false;
+        updateProgress();
+    });
+
+    /* ---------- warn before leaving if modified ---------- */
+    window.addEventListener('beforeunload', function(e){
+        if(formTouched){
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    updateProgress();
+})();
+</script>
+
+{% endblock %}

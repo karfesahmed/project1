@@ -1,0 +1,488 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<main class="content">
+            <div class="page-head">
+                <div>
+                    <h1>Welcome back, Sarah 👋</h1>
+                    <p>Here's what's happening with your store today.</p>
+                </div>
+            </div>
+
+            <!-- FILTER BAR -->
+            <div class="filter-bar">
+                <div class="time-tabs" role="tablist" aria-label="Time range">
+                    <button class="time-tab" data-range="today">Today</button>
+                    <button class="time-tab" data-range="7d">Last 7 Days</button>
+                    <button class="time-tab active" data-range="month">Last Month</button>
+                    <button class="time-tab" data-range="3m">Last 3 Months</button>
+                    <button class="time-tab" data-range="year">This Year</button>
+                    <button class="time-tab" data-range="custom">Custom Range</button>
+                </div>
+                <button class="btn-export" id="exportBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                    Export Report
+                </button>
+            </div>
+
+            <!-- STAT CARDS -->
+            <section class="stats-grid" aria-label="Key metrics">
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2l1.5 4M18 2l-1.5 4M4 6h16l-1.5 12.5a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 6z"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>12.4%</span>
+                    </div>
+                    <div class="stat-value" data-count="4820">0</div>
+                    <div class="stat-label">Total Orders</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,28 15,24 30,26 45,18 60,20 75,10 90,14 105,6 120,8" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>8.1%</span>
+                    </div>
+                    <div class="stat-value" data-count="3956">0</div>
+                    <div class="stat-label">Completed Orders</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,26 15,22 30,23 45,16 60,18 75,12 90,10 105,7 120,5" fill="none" stroke="var(--succes)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+                        <span class="stat-trend down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>3.2%</span>
+                    </div>
+                    <div class="stat-value" data-count="642">0</div>
+                    <div class="stat-label">Pending Orders</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,10 15,14 30,12 45,18 60,16 75,22 90,20 105,26 120,24" fill="none" stroke="var(--warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background:rgba(239,68,68,.12);color:var(--error);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div>
+                        <span class="stat-trend down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>1.6%</span>
+                    </div>
+                    <div class="stat-value" data-count="222">0</div>
+                    <div class="stat-label">Cancelled Orders</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,8 15,12 30,10 45,16 60,14 75,20 90,18 105,24 120,22" fill="none" stroke="var(--error)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 012.5-1h.5a2.5 2.5 0 010 5h-1a2.5 2.5 0 000 5h.5a2.5 2.5 0 002.5-1"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>18.9%</span>
+                    </div>
+                    <div class="stat-value" data-count="128450" data-prefix="$">$0</div>
+                    <div class="stat-label">Revenue</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,30 15,22 30,24 45,14 60,18 75,8 90,12 105,4 120,6" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>4.7%</span>
+                    </div>
+                    <div class="stat-value" data-count="86" data-prefix="$">$0</div>
+                    <div class="stat-label">Average Order Value</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,20 15,18 30,22 45,16 60,19 75,14 90,17 105,12 120,15" fill="none" stroke="var(--secondary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a7 7 0 0114 0v1"/><circle cx="18" cy="9" r="3"/><path d="M22 21v-1a5 5 0 00-4-4.9"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>9.3%</span>
+                    </div>
+                    <div class="stat-value" data-count="12680">0</div>
+                    <div class="stat-label">Customers</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,26 15,24 30,20 45,22 60,16 75,18 90,10 105,12 120,6" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <div class="stat-icon bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+                        <span class="stat-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>2.1%</span>
+                    </div>
+                    <div class="stat-value" data-count="4" data-decimals="1" data-suffix="%">0%</div>
+                    <div class="stat-label">Conversion Rate</div>
+                    <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none"><polyline points="0,18 15,20 30,16 45,19 60,14 75,17 90,10 105,13 120,8" fill="none" stroke="var(--succes)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+            </section>
+
+            <!-- ANALYTICS CHART + INVENTORY -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Revenue Analytics</h3>
+                            <p>Monthly performance overview</p>
+                        </div>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background:var(--primary)"></span>Revenue</span>
+                            <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Orders</span>
+                            <span class="legend-item"><span class="legend-dot" style="background:var(--secondary)"></span>Customers</span>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <svg id="mainChart" viewBox="0 0 600 260" preserveAspectRatio="none" aria-label="Monthly revenue, orders and customers trend chart" role="img">
+                            <defs>
+                                <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#DC2626" stop-opacity="0.28"/>
+                                    <stop offset="100%" stop-color="#DC2626" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <g stroke="var(--border-solid)" stroke-width="1">
+                                <line x1="0" y1="10" x2="600" y2="10"/>
+                                <line x1="0" y1="70" x2="600" y2="70"/>
+                                <line x1="0" y1="130" x2="600" y2="130"/>
+                                <line x1="0" y1="190" x2="600" y2="190"/>
+                                <line x1="0" y1="250" x2="600" y2="250"/>
+                            </g>
+                            <polygon points="0,180 50,160 100,170 150,120 200,140 250,90 300,110 350,70 400,95 450,55 500,75 550,40 600,60 600,250 0,250" fill="url(#gradRevenue)"/>
+                            <polyline points="0,180 50,160 100,170 150,120 200,140 250,90 300,110 350,70 400,95 450,55 500,75 550,40 600,60" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="0,210 50,205 100,195 150,190 200,175 250,180 300,155 350,160 400,140 450,145 500,120 550,125 600,100" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0"/>
+                            <polyline points="0,230 50,225 100,222 150,215 200,212 250,200 300,205 350,190 400,192 450,178 500,182 550,165 600,168" fill="none" stroke="var(--secondary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Traffic Sources</h3>
+                            <p>Where visitors come from</p>
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+                        <svg width="150" height="150" viewBox="0 0 42 42">
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="var(--background)" stroke-width="6"></circle>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="var(--primary)" stroke-width="6" stroke-dasharray="42 100" stroke-dashoffset="25" stroke-linecap="round"></circle>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="var(--accent)" stroke-width="6" stroke-dasharray="28 100" stroke-dashoffset="-17" stroke-linecap="round"></circle>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="var(--secondary)" stroke-width="6" stroke-dasharray="18 100" stroke-dashoffset="-45" stroke-linecap="round"></circle>
+                            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="var(--succes)" stroke-width="6" stroke-dasharray="12 100" stroke-dashoffset="-63" stroke-linecap="round"></circle>
+                        </svg>
+                        <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+                            <div class="legend-item" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;"><span class="legend-dot" style="background:var(--primary)"></span>Organic Search</span><strong>42%</strong></div>
+                            <div class="legend-item" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;"><span class="legend-dot" style="background:var(--accent)"></span>Social Media</span><strong>28%</strong></div>
+                            <div class="legend-item" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;"><span class="legend-dot" style="background:var(--secondary)"></span>Direct</span><strong>18%</strong></div>
+                            <div class="legend-item" style="justify-content:space-between;"><span style="display:flex;align-items:center;gap:7px;"><span class="legend-dot" style="background:var(--succes)"></span>Referral</span><strong>12%</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEST SELLING + LOW SELLING -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Best Selling Product</h3>
+                            <p>Your top performer this month</p>
+                        </div>
+                        <span class="badge success">Trending</span>
+                    </div>
+                    <div class="product-hero">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop" alt="Aria Wireless Headphones">
+                        <div class="product-hero-info">
+                            <h4>Aria Wireless Headphones</h4>
+                            <p class="cat">Category: Audio &amp; Electronics</p>
+                            <div class="product-meta-row">
+                                <div><strong>1,284</strong><span>Orders</span></div>
+                                <div><strong>$96,420</strong><span>Revenue</span></div>
+                                <div><strong>212</strong><span>In Stock</span></div>
+                            </div>
+                            <div class="progress-track"><div class="progress-fill" data-width="82"></div></div>
+                            <div class="progress-caption"><span>82% of monthly goal</span><span>Target: $118,000</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>Low Selling Products</h3>
+                            <p>Needs attention</p>
+                        </div>
+                        <a href="#" class="card-link">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Product</th><th>Orders</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><div class="cell-product"><img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=100&h=100&fit=crop" alt=""><div><strong>Cedar Desk Lamp</strong><span>Home &amp; Living</span></div></div></td>
+                                    <td>12</td>
+                                    <td><span class="badge error">Slow</span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="cell-product"><img src="https://images.unsplash.com/photo-1602751584547-95ba3f9b0b7c?w=100&h=100&fit=crop" alt=""><div><strong>Terra Ceramic Mug</strong><span>Kitchenware</span></div></div></td>
+                                    <td>19</td>
+                                    <td><span class="badge warning">Watch</span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="cell-product"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=100&h=100&fit=crop" alt=""><div><strong>Linen Tote Bag</strong><span>Accessories</span></div></div></td>
+                                    <td>24</td>
+                                    <td><span class="badge warning">Watch</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ORDERS -->
+            <div class="card" style="margin-bottom:18px;">
+                <div class="card-head">
+                    <div>
+                        <h3>Recent Orders</h3>
+                        <p>Latest transactions across your store</p>
+                    </div>
+                    <a href="#" class="card-link">View all orders <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Order ID</th><th>Customer</th><th>Location</th><th>Date</th><th>Payment</th><th>Status</th><th>Total</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td>#ORD-8842</td>
+                                <td><div class="cell-product"><img src="https://i.pravatar.cc/80?img=32" alt=""><div><strong>Marcus Lee</strong><span>marcus.lee@mail.com</span></div></div></td>
+                                <td>Austin, US</td>
+                                <td>Jul 19, 2026</td>
+                                <td>Visa •• 4291</td>
+                                <td><span class="badge success">Delivered</span></td>
+                                <td>$248.00</td>
+                                <td><button class="row-action" aria-label="View order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-8841</td>
+                                <td><div class="cell-product"><img src="https://i.pravatar.cc/80?img=45" alt=""><div><strong>Elena Popescu</strong><span>elena.p@mail.com</span></div></div></td>
+                                <td>Berlin, DE</td>
+                                <td>Jul 19, 2026</td>
+                                <td>PayPal</td>
+                                <td><span class="badge warning">Processing</span></td>
+                                <td>$132.50</td>
+                                <td><button class="row-action" aria-label="View order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-8840</td>
+                                <td><div class="cell-product"><img src="https://i.pravatar.cc/80?img=25" alt=""><div><strong>Yusuf Demir</strong><span>y.demir@mail.com</span></div></div></td>
+                                <td>Algiers, DZ</td>
+                                <td>Jul 18, 2026</td>
+                                <td>Mastercard •• 7715</td>
+                                <td><span class="badge info">Shipped</span></td>
+                                <td>$412.90</td>
+                                <td><button class="row-action" aria-label="View order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-8839</td>
+                                <td><div class="cell-product"><img src="https://i.pravatar.cc/80?img=51" alt=""><div><strong>Hana Kobayashi</strong><span>hana.k@mail.com</span></div></div></td>
+                                <td>Osaka, JP</td>
+                                <td>Jul 18, 2026</td>
+                                <td>Visa •• 0033</td>
+                                <td><span class="badge error">Cancelled</span></td>
+                                <td>$76.00</td>
+                                <td><button class="row-action" aria-label="View order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-8838</td>
+                                <td><div class="cell-product"><img src="https://i.pravatar.cc/80?img=15" alt=""><div><strong>Noah Williams</strong><span>noah.w@mail.com</span></div></div></td>
+                                <td>Toronto, CA</td>
+                                <td>Jul 17, 2026</td>
+                                <td>Apple Pay</td>
+                                <td><span class="badge success">Delivered</span></td>
+                                <td>$189.30</td>
+                                <td><button class="row-action" aria-label="View order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- INVENTORY ALERT -->
+            <h2 class="section-title">Inventory Alerts</h2>
+            <div class="alert-grid" style="margin-bottom:18px;">
+                <div class="alert-card">
+                    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=100&h=100&fit=crop" alt="">
+                    <div><strong>Cedar Desk Lamp</strong><span>Only 4 left in stock</span></div>
+                </div>
+                <div class="alert-card">
+                    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=100&h=100&fit=crop" alt="">
+                    <div><strong>Aria Wireless Buds</strong><span>Only 7 left in stock</span></div>
+                </div>
+                <div class="alert-card">
+                    <img src="https://images.unsplash.com/photo-1560343090-f0409e92791a?w=100&h=100&fit=crop" alt="">
+                    <div><strong>Nimbus Backpack</strong><span>Only 2 left in stock</span></div>
+                </div>
+            </div>
+
+            <!-- CUSTOMERS / LOCATIONS / QUICK ACTIONS -->
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Latest Customers</h3>
+                        <a href="#" class="card-link">All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></a>
+                    </div>
+                    <div class="customer-row">
+                        <img src="https://i.pravatar.cc/80?img=32" alt="">
+                        <div class="customer-info"><strong>Marcus Lee</strong><span>Joined Jul 19, 2026</span></div>
+                        <div class="customer-orders"><strong>6</strong><span>orders</span></div>
+                    </div>
+                    <div class="customer-row">
+                        <img src="https://i.pravatar.cc/80?img=45" alt="">
+                        <div class="customer-info"><strong>Elena Popescu</strong><span>Joined Jul 18, 2026</span></div>
+                        <div class="customer-orders"><strong>2</strong><span>orders</span></div>
+                    </div>
+                    <div class="customer-row">
+                        <img src="https://i.pravatar.cc/80?img=25" alt="">
+                        <div class="customer-info"><strong>Yusuf Demir</strong><span>Joined Jul 17, 2026</span></div>
+                        <div class="customer-orders"><strong>9</strong><span>orders</span></div>
+                    </div>
+                    <div class="customer-row">
+                        <img src="https://i.pravatar.cc/80?img=51" alt="">
+                        <div class="customer-info"><strong>Hana Kobayashi</strong><span>Joined Jul 15, 2026</span></div>
+                        <div class="customer-orders"><strong>1</strong><span>order</span></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Top Locations</h3>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <div class="loc-card">
+                            <div class="loc-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                            <div class="loc-info"><strong>Austin, US</strong><span>842 orders · $64,200</span></div>
+                            <span class="loc-growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>14%</span>
+                        </div>
+                        <div class="loc-card">
+                            <div class="loc-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                            <div class="loc-info"><strong>Berlin, DE</strong><span>611 orders · $48,760</span></div>
+                            <span class="loc-growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>9%</span>
+                        </div>
+                        <div class="loc-card">
+                            <div class="loc-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                            <div class="loc-info"><strong>Algiers, DZ</strong><span>398 orders · $31,150</span></div>
+                            <span class="loc-growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>21%</span>
+                        </div>
+                        <div class="loc-card">
+                            <div class="loc-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                            <div class="loc-info"><strong>Osaka, JP</strong><span>276 orders · $22,940</span></div>
+                            <span class="loc-growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>6%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="qa-grid" style="grid-template-columns:1fr 1fr;">
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></div>
+                            <strong>Add Product</strong>
+                            <span>List a new item</span>
+                        </button>
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 9l6 6M15 9l-6 6"/><rect x="2" y="6" width="20" height="12" rx="3"/></svg></div>
+                            <strong>Create Coupon</strong>
+                            <span>New promo code</span>
+                        </button>
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></div>
+                            <strong>Add Category</strong>
+                            <span>Organize catalog</span>
+                        </button>
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
+                            <strong>Create Discount</strong>
+                            <span>Boost sales</span>
+                        </button>
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div>
+                            <strong>Export Orders</strong>
+                            <span>Download CSV</span>
+                        </button>
+                        <button class="qa-btn">
+                            <div class="qa-icon bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+                            <strong>Generate Report</strong>
+                            <span>Full analytics</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE + RIGHT PANEL -->
+            <div class="grid-main-side">
+                <div class="card">
+                    <div class="card-head">
+                        <h3>Activity Timeline</h3>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-dot bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <p>You approved order <strong>#ORD-8842</strong></p>
+                            <span>Today, 10:42 AM</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-dot bg-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span>
+                            <p>New product "Nimbus Backpack" was published</p>
+                            <span>Today, 9:15 AM</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-dot bg-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/></svg></span>
+                            <p>Coupon <strong>SUMMER25</strong> is expiring in 2 days</p>
+                            <span>Yesterday, 6:30 PM</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-dot bg-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 2l1.5 4M18 2l-1.5 4M4 6h16l-1.5 12.5a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 6z"/></svg></span>
+                            <p>Order <strong>#ORD-8839</strong> was cancelled</p>
+                            <span>Yesterday, 2:05 PM</span>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-dot bg-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <p>Payout of <strong>$18,240</strong> was processed</p>
+                            <span>Jul 17, 11:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card widget">
+                        <div class="widget-title">Today's Goal <span>82%</span></div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 36 36">
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--background)" stroke-width="3.5"/>
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-dasharray="82,100" stroke-linecap="round"/>
+                            </svg>
+                            <div class="ring-caption"><strong>$8,200</strong><span>of $10,000 goal</span></div>
+                        </div>
+                    </div>
+
+                    <div class="card widget">
+                        <div class="widget-title">Revenue Target <span>Q3 2026</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--secondry-text);">
+                            <span>$128,450 earned</span><span>Goal $200,000</span>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill" data-width="64" style="background:linear-gradient(90deg,var(--accent),var(--primary));"></div></div>
+                    </div>
+
+                    <div class="card widget">
+                        <div class="widget-title">Storage Usage <span>3.2 / 10 GB</span></div>
+                        <div class="bar-track"><div class="bar-fill" data-width="32" style="background:linear-gradient(90deg,var(--secondary),var(--primary));"></div></div>
+                    </div>
+
+                    <div class="card widget">
+                        <div class="widget-title">Server Status</div>
+                        <div class="status-row"><span><span class="status-dot"></span>API Gateway</span><strong style="color:var(--succes);">Operational</strong></div>
+                        <div class="status-row"><span><span class="status-dot"></span>Payments</span><strong style="color:var(--succes);">Operational</strong></div>
+                        <div class="status-row"><span><span class="status-dot" style="background:var(--warning);box-shadow:0 0 0 4px rgba(245,158,11,.15);"></span>CDN</span><strong style="color:var(--warning);">Degraded</strong></div>
+                    </div>
+
+                    <div class="card widget">
+                        <div class="widget-title">Pending Reviews <span>7 new</span></div>
+                        <p style="font-size:12.5px;color:var(--secondry-text);line-height:1.5;">7 customer reviews are awaiting your approval before they go live on product pages.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+{% endblock %}
