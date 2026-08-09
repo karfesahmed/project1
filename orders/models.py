@@ -28,8 +28,8 @@ class Order(models.Model):
     delivery_status = models.CharField(max_length=64,choices=DELIVERY_STATUS,blank=True,default="notregistered")
     product = models.ForeignKey(
         Product,
-        on_delete=models.SET_NULL,
         null=True,
+        on_delete=models.SET_NULL,
         related_name="orders"
     )
     size = models.ForeignKey(
@@ -46,7 +46,7 @@ class Order(models.Model):
             on_delete=models.SET_NULL,
             related_name="orders"
         )
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    quantity = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1)])
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -57,43 +57,62 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         related_name="orders"
     )
-    wilaya_code = models.CharField(max_length=2)
-    wilaya_name = models.CharField(max_length=64)
+    wilaya_code = models.CharField(max_length=2,blank=True,null=True)
+    wilaya_name = models.CharField(max_length=64,blank=True,null=True)
     commune = models.ForeignKey(
         Commune,
         null=True,
+        blank=True,
         on_delete=models.SET_NULL,
         related_name="orders"
     )
     
-    product_str = models.CharField(max_length=250)
-    product_price = models.DecimalField(max_digits=10,decimal_places=2)
+    product_str = models.CharField(max_length=250,blank=True,null=True)
+    product_price = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
     size_str = models.CharField(max_length=250,blank=True,null=True)
     size_price = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
     color_str = models.CharField(max_length=64,blank=True,null=True)
-    delivery_cost = models.DecimalField(max_digits=10,decimal_places=2) 
-    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    color_image = models.ImageField(upload_to='product_images/',blank=True,null=True)
+    delivery_cost = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True) 
+    total_price = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
 
 
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.quantity <= 0:
                 raise ValidationError({
-                    "Quantity":"Ensure this value is greater than or equal to 1."
+                    "quantity":"Ensure this value is greater than or equal to 1."
                 })
             if self.wilaya is None:
                 raise ValidationError({
-                    "Wilaya":"A wilaya is required to create an order."
+                    "wilaya":"A wilaya is required to create an order."
                 })
+            else : 
+                communes = self.wilaya.communes
+                if self.commune is not None:
+                    if not communes.filter(pk=self.commune.pk).exists():
+                        raise ValidationError({
+                            "commune":f"A commune is not in {self.wilaya.name} communes"
+                        })
             self.wilaya_code = self.wilaya.code
             self.wilaya_name = self.wilaya.name
             current_product = self.product
-            self.product_str = current_product.name
-            if current_product.discount_price:
-                self.product_price = current_product.discount_price
-            else:
-                self.product_price = current_product.price
+            if current_product:
 
+                self.product_str = current_product.name
+                if current_product.discount_price:
+                    self.product_price = current_product.discount_price
+                else:
+                    self.product_price = current_product.price
+            
+                if not current_product.is_available : 
+                    raise ValidationError({
+                        "product":"Product is not is_available"
+                    })
+            else:
+                raise ValidationError({
+                    "product":"product is required"
+                })
             if self.size:
                 current_price = self.size
                 
@@ -112,6 +131,7 @@ class Order(models.Model):
                 current_color = self.color
                 if self.color.product == self.product:
                     self.color_str = current_color.name
+                    self.color_image = current_color.image
                 else:
                     raise ValidationError({
                         "color": "This color does not belong to the selected product."

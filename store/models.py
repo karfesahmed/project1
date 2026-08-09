@@ -1,5 +1,9 @@
 from django.db import models
 from accounts.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
 class StoreProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="store_profile")
     store_name = models.CharField(max_length=255,blank=True, null=True)
@@ -19,4 +23,11 @@ class StoreProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.store_name
+        if self.store_name:
+            return self.store_name
+        return "store profile !"
+
+@receiver(post_save,sender=User)
+def create_profile(sender,instance,created,**kwargs):
+    if created and not StoreProfile.objects.filter(user=instance) and instance.is_superuser:
+        StoreProfile.objects.create(user=instance)

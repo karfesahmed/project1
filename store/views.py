@@ -7,8 +7,7 @@ from .permissions import IsOwnerOrReadOnly
 class StoreProfileDetail(generics.RetrieveUpdateAPIView):
     def get_object(self):
         user = get_object_or_404(User,is_superuser=True)
-        store_profile , created = StoreProfile.objects.get_or_create(user = user)
-        return store_profile
+        return get_object_or_404(StoreProfile,user = user)
 
     serializer_class = StoreProfileSerializer
     permission_classes = [IsOwnerOrReadOnly]
