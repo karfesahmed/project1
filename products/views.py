@@ -10,7 +10,6 @@ class ProductPagination(PageNumberPagination):
     page_size = 10
 
 
-
 class CategoryList(generics.ListAPIView):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
